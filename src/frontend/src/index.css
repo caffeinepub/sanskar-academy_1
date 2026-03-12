@@ -1,0 +1,95 @@
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/assets/fonts/PlayfairDisplay-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/assets/fonts/PlusJakartaSans-Variable.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Navy Blue: oklch(0.25 0.07 260) */
+    /* Gold: oklch(0.72 0.14 80) */
+    --background: 0.98 0.004 80;
+    --foreground: 0.18 0.06 260;
+
+    --card: 1 0 0;
+    --card-foreground: 0.18 0.06 260;
+
+    --popover: 1 0 0;
+    --popover-foreground: 0.18 0.06 260;
+
+    --primary: 0.24 0.07 264;
+    --primary-foreground: 0.98 0.01 80;
+
+    --secondary: 0.72 0.13 80;
+    --secondary-foreground: 0.18 0.06 260;
+
+    --muted: 0.94 0.01 260;
+    --muted-foreground: 0.48 0.04 260;
+
+    --accent: 0.72 0.13 80;
+    --accent-foreground: 0.18 0.06 260;
+
+    --destructive: 0.55 0.22 25;
+    --destructive-foreground: 0.98 0.01 80;
+
+    --border: 0.88 0.02 260;
+    --input: 0.88 0.02 260;
+    --ring: 0.72 0.13 80;
+
+    --radius: 0.5rem;
+
+    --chart-1: 0.24 0.07 264;
+    --chart-2: 0.72 0.13 80;
+    --chart-3: 0.55 0.1 160;
+    --chart-4: 0.65 0.12 30;
+    --chart-5: 0.48 0.09 300;
+
+    --sidebar: 0.24 0.07 264;
+    --sidebar-foreground: 0.98 0.01 80;
+    --sidebar-primary: 0.72 0.13 80;
+    --sidebar-primary-foreground: 0.18 0.06 260;
+    --sidebar-accent: 0.3 0.07 264;
+    --sidebar-accent-foreground: 0.98 0.01 80;
+    --sidebar-border: 0.32 0.06 264;
+    --sidebar-ring: 0.72 0.13 80;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Section scroll offset for sticky nav */
+section[id] {
+  scroll-margin-top: 72px;
+}
