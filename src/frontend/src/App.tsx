@@ -7,12 +7,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   BookOpen,
+  Camera,
   CheckCircle2,
   ChevronRight,
   Heart,
+  ImageIcon,
   Lightbulb,
   MapPin,
   Menu,
+  MessageCircle,
   Phone,
   Shield,
   Star,
@@ -22,23 +25,144 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { useSubmitContact } from "./hooks/useQueries";
 
 const queryClient = new QueryClient();
+
+function ContactForm() {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = `New Enquiry from Sanskar Academy Website%0AName: ${encodeURIComponent(name)}%0APhone: ${encodeURIComponent(phone)}%0AMessage: ${encodeURIComponent(message)}`;
+    const url = `https://wa.me/919694683875?text=${text}`;
+    window.open(url, "_blank");
+    setSubmitted(true);
+    setName("");
+    setPhone("");
+    setMessage("");
+    setTimeout(() => setSubmitted(false), 5000);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      className="mt-8 w-full"
+    >
+      <Card className="border-0 shadow-card overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-gold-500 to-gold-400" />
+        <CardContent className="p-7">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
+              <MessageCircle className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <h3 className="font-display text-xl font-bold text-navy-800">
+                Send Us a Message
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                We'll reply on WhatsApp
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="contact-name"
+                className="text-navy-700 font-semibold text-sm"
+              >
+                Your Name
+              </Label>
+              <Input
+                id="contact-name"
+                data-ocid="contact.name.input"
+                type="text"
+                placeholder="Enter your full name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="border-navy-200 focus:border-gold-500 focus:ring-gold-500/20"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="contact-phone"
+                className="text-navy-700 font-semibold text-sm"
+              >
+                Phone Number
+              </Label>
+              <Input
+                id="contact-phone"
+                data-ocid="contact.phone.input"
+                type="tel"
+                placeholder="+91 XXXXX XXXXX"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                className="border-navy-200 focus:border-gold-500 focus:ring-gold-500/20"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="contact-message"
+                className="text-navy-700 font-semibold text-sm"
+              >
+                Message
+              </Label>
+              <Textarea
+                id="contact-message"
+                data-ocid="contact.message.textarea"
+                placeholder="Tell us about your enquiry..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+                rows={4}
+                className="border-navy-200 focus:border-gold-500 focus:ring-gold-500/20 resize-none"
+              />
+            </div>
+
+            <Button
+              type="submit"
+              data-ocid="contact.submit_button"
+              className="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-2.5 text-base shadow-md transition-all duration-200"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              Send Message
+            </Button>
+          </form>
+
+          <AnimatePresence>
+            {submitted && (
+              <motion.div
+                data-ocid="contact.success_state"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.3 }}
+                className="mt-4 flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-green-700 text-sm font-medium"
+              >
+                <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                Message sent! We will contact you soon.
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
 
 function SchoolWebsite() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
-  const [submitted, setSubmitted] = useState(false);
-
-  const submitContact = useSubmitContact();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -50,21 +174,10 @@ function SchoolWebsite() {
     { label: "Home", href: "#home", ocid: "nav.home.link" },
     { label: "About", href: "#about", ocid: "nav.about.link" },
     { label: "Academics", href: "#academics", ocid: "nav.academics.link" },
+    { label: "Gallery", href: "#gallery", ocid: "nav.gallery.link" },
     { label: "Admissions", href: "#admissions", ocid: "nav.admissions.link" },
     { label: "Contact", href: "#contact", ocid: "nav.contact.link" },
   ];
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await submitContact.mutateAsync(formData);
-      setSubmitted(true);
-      setFormData({ name: "", email: "", phone: "", message: "" });
-      toast.success("Message sent successfully!");
-    } catch {
-      toast.error("Failed to send message. Please try again.");
-    }
-  };
 
   const fadeUp = {
     hidden: { opacity: 0, y: 32 },
@@ -88,7 +201,7 @@ function SchoolWebsite() {
           {/* Logo */}
           <a href="#home" className="flex items-center gap-3 group">
             <img
-              src="/assets/generated/sanskar-academy-logo-transparent.dim_200x200.png"
+              src="/assets/uploads/WhatsApp-Image-2026-03-12-at-9.50.16-AM-1-1.jpeg"
               alt="Sanskar Academy Logo"
               className="h-12 w-12 object-contain"
             />
@@ -172,16 +285,17 @@ function SchoolWebsite() {
         {/* HERO SECTION */}
         <section
           id="home"
-          className="relative min-h-screen flex items-center justify-center"
+          className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900"
         >
+          {/* Subtle dot pattern overlay */}
           <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            className="absolute inset-0 opacity-10"
             style={{
               backgroundImage:
-                "url('/assets/generated/school-hero-banner.dim_1200x600.jpg')",
+                "radial-gradient(circle, rgba(212,175,55,0.4) 1px, transparent 1px)",
+              backgroundSize: "40px 40px",
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-navy-900/80 via-navy-900/70 to-navy-900/90" />
 
           <motion.div
             className="relative z-10 text-center px-4 max-w-4xl mx-auto pt-20"
@@ -267,6 +381,68 @@ function SchoolWebsite() {
               ))}
             </motion.div>
           </motion.div>
+        </section>
+
+        {/* GALLERY SECTION */}
+        <section
+          id="gallery"
+          data-ocid="gallery.section"
+          className="py-24 bg-navy-50"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={stagger}
+              className="text-center mb-14"
+            >
+              <motion.p
+                variants={fadeUp}
+                className="text-gold-600 font-semibold text-sm tracking-widest uppercase mb-2"
+              >
+                School Life &amp; Events
+              </motion.p>
+              <motion.h2
+                variants={fadeUp}
+                className="font-display text-4xl sm:text-5xl font-bold text-navy-800"
+              >
+                Our Gallery
+              </motion.h2>
+              <motion.p
+                variants={fadeUp}
+                className="mt-4 text-muted-foreground text-base max-w-xl mx-auto"
+              >
+                Photos of our students, events, and school activities will be
+                shared here soon. Stay tuned!
+              </motion.p>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={stagger}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  data-ocid={`gallery.item.${i}`}
+                >
+                  <div className="aspect-[4/3] bg-white border-2 border-dashed border-navy-200 rounded-2xl flex flex-col items-center justify-center gap-3 hover:border-gold-400 hover:bg-gold-50/30 transition-all duration-300 group">
+                    <div className="w-14 h-14 rounded-full bg-navy-100 group-hover:bg-gold-100 flex items-center justify-center transition-colors duration-300">
+                      <Camera className="w-7 h-7 text-navy-400 group-hover:text-gold-600 transition-colors duration-300" />
+                    </div>
+                    <p className="text-navy-400 group-hover:text-navy-600 text-sm font-medium transition-colors duration-300">
+                      Photo coming soon
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </section>
 
         {/* ABOUT US */}
@@ -651,7 +827,7 @@ function SchoolWebsite() {
 
         {/* CONTACT */}
         <section id="contact" className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -673,256 +849,77 @@ function SchoolWebsite() {
               </motion.h2>
             </motion.div>
 
-            <div className="grid lg:grid-cols-2 gap-12">
-              {/* Contact Info */}
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-80px" }}
-                variants={stagger}
-              >
-                <motion.h3
-                  variants={fadeUp}
-                  className="font-display text-2xl font-bold text-navy-800 mb-8"
-                >
-                  School Information
-                </motion.h3>
-                <motion.div variants={stagger} className="space-y-6">
-                  {[
-                    {
-                      icon: MapPin,
-                      label: "Address",
-                      value:
-                        "40-Rajmarg, Chhatrasal Nagar, Malviya Nagar, Jaipur",
-                    },
-                    {
-                      icon: Phone,
-                      label: "Phone",
-                      value: "+91 8104640177",
-                    },
-                  ].map((info) => (
-                    <motion.div
-                      key={info.label}
-                      variants={fadeUp}
-                      className="flex items-start gap-4"
-                    >
-                      <div className="w-12 h-12 rounded-xl bg-navy-50 flex items-center justify-center flex-shrink-0">
-                        <info.icon className="w-5 h-5 text-navy-700" />
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={stagger}
+              className="flex flex-col items-center"
+            >
+              <motion.div variants={stagger} className="space-y-6 w-full">
+                {[
+                  {
+                    icon: MapPin,
+                    label: "Address",
+                    value:
+                      "40-Rajmarg, Chhatrasal Nagar, Malviya Nagar, Jaipur",
+                  },
+                  {
+                    icon: Phone,
+                    label: "Phone",
+                    value: "+91 8104640177",
+                  },
+                ].map((info) => (
+                  <motion.div
+                    key={info.label}
+                    variants={fadeUp}
+                    className="flex items-start gap-4 bg-navy-50 rounded-2xl p-6"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-navy-100 flex items-center justify-center flex-shrink-0">
+                      <info.icon className="w-5 h-5 text-navy-700" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-gold-600 uppercase tracking-wider mb-1">
+                        {info.label}
                       </div>
-                      <div>
-                        <div className="text-xs font-semibold text-gold-600 uppercase tracking-wider mb-1">
-                          {info.label}
-                        </div>
-                        <div className="text-navy-800 font-medium">
-                          {info.value}
-                        </div>
+                      <div className="text-navy-800 font-medium text-lg">
+                        {info.value}
                       </div>
-                    </motion.div>
-                  ))}
-                </motion.div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
 
-                <motion.div
-                  variants={fadeUp}
-                  className="mt-10 p-6 bg-navy-700 rounded-2xl"
-                >
-                  <h4 className="font-display text-lg font-bold text-white mb-2">
-                    School Hours
-                  </h4>
-                  <div className="space-y-1 text-navy-200 text-sm">
-                    <div className="flex justify-between">
-                      <span>Monday – Saturday</span>
-                      <span className="text-gold-400 font-medium">
-                        8:00 AM – 2:30 PM
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Office Hours</span>
-                      <span className="text-gold-400 font-medium">
-                        9:00 AM – 5:00 PM
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Sunday</span>
-                      <span className="text-navy-400">Closed</span>
-                    </div>
+              <motion.div
+                variants={fadeUp}
+                className="mt-8 p-6 bg-navy-700 rounded-2xl w-full"
+              >
+                <h4 className="font-display text-lg font-bold text-white mb-4 text-center">
+                  School Hours
+                </h4>
+                <div className="space-y-2 text-navy-200 text-sm">
+                  <div className="flex justify-between">
+                    <span>Monday – Saturday</span>
+                    <span className="text-gold-400 font-medium">
+                      8:00 AM – 2:30 PM
+                    </span>
                   </div>
-                </motion.div>
+                  <div className="flex justify-between">
+                    <span>Office Hours</span>
+                    <span className="text-gold-400 font-medium">
+                      9:00 AM – 5:00 PM
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Sunday</span>
+                    <span className="text-navy-400">Closed</span>
+                  </div>
+                </div>
               </motion.div>
 
-              {/* Contact Form */}
-              <motion.div
-                initial={{ opacity: 0, x: 32 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.6 }}
-              >
-                <Card className="border-0 shadow-card">
-                  <CardContent className="p-8">
-                    <AnimatePresence mode="wait">
-                      {submitted ? (
-                        <motion.div
-                          key="success"
-                          data-ocid="contact.success_state"
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          className="text-center py-12"
-                        >
-                          <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-5">
-                            <CheckCircle2 className="w-10 h-10 text-emerald-500" />
-                          </div>
-                          <h3 className="font-display text-2xl font-bold text-navy-800 mb-3">
-                            Message Received!
-                          </h3>
-                          <p className="text-muted-foreground mb-6">
-                            Thank you for reaching out. Our admissions team will
-                            contact you within 24 hours.
-                          </p>
-                          <Button
-                            variant="outline"
-                            onClick={() => setSubmitted(false)}
-                            className="border-navy-200 text-navy-700 hover:bg-navy-50"
-                          >
-                            Send Another Message
-                          </Button>
-                        </motion.div>
-                      ) : (
-                        <motion.form
-                          key="form"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          onSubmit={handleSubmit}
-                          className="space-y-5"
-                        >
-                          <h3 className="font-display text-xl font-bold text-navy-800 mb-6">
-                            Send Us a Message
-                          </h3>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="name"
-                              className="text-navy-700 font-medium text-sm"
-                            >
-                              Full Name{" "}
-                              <span className="text-destructive">*</span>
-                            </Label>
-                            <Input
-                              id="name"
-                              data-ocid="contact.name.input"
-                              placeholder="Your full name"
-                              value={formData.name}
-                              onChange={(e) =>
-                                setFormData((p) => ({
-                                  ...p,
-                                  name: e.target.value,
-                                }))
-                              }
-                              required
-                              className="border-border focus:border-gold-500 focus:ring-gold-500/20"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="email"
-                              className="text-navy-700 font-medium text-sm"
-                            >
-                              Email Address{" "}
-                              <span className="text-destructive">*</span>
-                            </Label>
-                            <Input
-                              id="email"
-                              type="email"
-                              data-ocid="contact.email.input"
-                              placeholder="your@email.com"
-                              value={formData.email}
-                              onChange={(e) =>
-                                setFormData((p) => ({
-                                  ...p,
-                                  email: e.target.value,
-                                }))
-                              }
-                              required
-                              className="border-border focus:border-gold-500"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="phone"
-                              className="text-navy-700 font-medium text-sm"
-                            >
-                              Phone Number
-                            </Label>
-                            <Input
-                              id="phone"
-                              type="tel"
-                              data-ocid="contact.phone.input"
-                              placeholder="+91 XXXXX XXXXX"
-                              value={formData.phone}
-                              onChange={(e) =>
-                                setFormData((p) => ({
-                                  ...p,
-                                  phone: e.target.value,
-                                }))
-                              }
-                              className="border-border focus:border-gold-500"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label
-                              htmlFor="message"
-                              className="text-navy-700 font-medium text-sm"
-                            >
-                              Message{" "}
-                              <span className="text-destructive">*</span>
-                            </Label>
-                            <Textarea
-                              id="message"
-                              data-ocid="contact.message.textarea"
-                              placeholder="Write your message here..."
-                              rows={4}
-                              value={formData.message}
-                              onChange={(e) =>
-                                setFormData((p) => ({
-                                  ...p,
-                                  message: e.target.value,
-                                }))
-                              }
-                              required
-                              className="border-border focus:border-gold-500 resize-none"
-                            />
-                          </div>
-
-                          {submitContact.isError && (
-                            <div
-                              data-ocid="contact.error_state"
-                              className="text-destructive text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3"
-                            >
-                              Failed to send message. Please try again or call
-                              us directly.
-                            </div>
-                          )}
-
-                          <Button
-                            type="submit"
-                            data-ocid="contact.submit_button"
-                            disabled={submitContact.isPending}
-                            className="w-full bg-navy-700 hover:bg-navy-600 text-white font-semibold py-3 text-base"
-                          >
-                            {submitContact.isPending
-                              ? "Sending..."
-                              : "Send Message"}
-                          </Button>
-                        </motion.form>
-                      )}
-                    </AnimatePresence>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
+              {/* WhatsApp Contact Form */}
+              <ContactForm />
+            </motion.div>
           </div>
         </section>
       </main>
@@ -935,7 +932,7 @@ function SchoolWebsite() {
             <div className="lg:col-span-2">
               <div className="flex items-center gap-3 mb-4">
                 <img
-                  src="/assets/generated/sanskar-academy-logo-transparent.dim_200x200.png"
+                  src="/assets/uploads/WhatsApp-Image-2026-03-12-at-9.50.16-AM-1-1.jpeg"
                   alt="Sanskar Academy"
                   className="h-12 w-12 object-contain"
                 />
