@@ -928,13 +928,13 @@ function SchoolWebsite() {
                   <div className="flex justify-between">
                     <span>Monday – Saturday</span>
                     <span className="text-gold-400 font-medium">
-                      8:00 AM – 2:30 PM
+                      8:00 AM – 1:30 PM
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Office Hours</span>
                     <span className="text-gold-400 font-medium">
-                      9:00 AM – 5:00 PM
+                      8:00 AM – 1:30 PM
                     </span>
                   </div>
                   <div className="flex justify-between">
