@@ -148,14 +148,9 @@ type GalleryPhoto = {
 
 const galleryPhotos: GalleryPhoto[] = [
   {
-    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.13-PM-1--1.jpeg",
-    alt: "Staff Photo",
-    orientation: "landscape",
-  },
-  {
     src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.09-PM-4.jpeg",
     alt: "Fancy Dress Girls",
-    orientation: "portrait",
+    orientation: "landscape",
   },
   {
     src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.12-PM-2--2.jpeg",
@@ -165,7 +160,7 @@ const galleryPhotos: GalleryPhoto[] = [
   {
     src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.11-PM-1--5.jpeg",
     alt: "Dinosaur Trip",
-    orientation: "portrait",
+    orientation: "landscape",
   },
   {
     src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.12-PM-1--3.jpeg",
@@ -185,7 +180,7 @@ const galleryPhotos: GalleryPhoto[] = [
   {
     src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.08-PM-1--10.jpeg",
     alt: "Yellow Kids Basant",
-    orientation: "portrait",
+    orientation: "landscape",
   },
   {
     src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.08-PM-8.jpeg",
