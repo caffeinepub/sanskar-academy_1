@@ -426,7 +426,7 @@ function SchoolWebsite() {
 
             <motion.h1
               variants={fadeUp}
-              className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-4 leading-tight"
+              className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-gold-300 mb-4 leading-tight"
             >
               Sanskar <span className="text-gold-400">Academy</span>
             </motion.h1>
@@ -464,7 +464,7 @@ function SchoolWebsite() {
                   data-ocid="hero.learn_more.secondary_button"
                   size="lg"
                   variant="outline"
-                  className="border-white/40 text-white hover:bg-white/10 hover:border-white font-semibold px-8 py-3 text-base backdrop-blur-sm"
+                  className="border-white/40 text-white hover:bg-white/10 hover:border-white font-semibold px-8 py-3 text-base backdrop-blur-sm bg-transparent"
                 >
                   Learn More
                 </Button>
