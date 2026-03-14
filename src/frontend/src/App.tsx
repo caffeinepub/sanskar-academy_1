@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toaster } from "@/components/ui/sonner";
@@ -7,11 +13,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   BookOpen,
-  Camera,
   CheckCircle2,
   ChevronRight,
   Heart,
-  ImageIcon,
   Lightbulb,
   MapPin,
   Menu,
@@ -19,16 +23,16 @@ import {
   Phone,
   Shield,
   Star,
-  Trophy,
   Users,
   X,
+  ZoomIn,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
 
-function ContactForm() {
+function ContactForm({ onSuccess }: { onSuccess?: () => void }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
@@ -43,126 +47,178 @@ function ContactForm() {
     setName("");
     setPhone("");
     setMessage("");
-    setTimeout(() => setSubmitted(false), 5000);
+    setTimeout(() => {
+      setSubmitted(false);
+      onSuccess?.();
+    }, 3000);
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6 }}
-      className="mt-8 w-full"
-    >
-      <Card className="border-0 shadow-card overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-gold-500 to-gold-400" />
-        <CardContent className="p-7">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
-              <MessageCircle className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <h3 className="font-display text-xl font-bold text-navy-800">
-                Send Us a Message
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                We'll reply on WhatsApp
-              </p>
-            </div>
-          </div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-1.5">
+        <Label
+          htmlFor="contact-name"
+          className="text-navy-700 font-semibold text-sm"
+        >
+          Your Name
+        </Label>
+        <Input
+          id="contact-name"
+          data-ocid="contact.name.input"
+          type="text"
+          placeholder="Enter your full name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="border-navy-200 focus:border-gold-500 focus:ring-gold-500/20"
+        />
+      </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="contact-name"
-                className="text-navy-700 font-semibold text-sm"
-              >
-                Your Name
-              </Label>
-              <Input
-                id="contact-name"
-                data-ocid="contact.name.input"
-                type="text"
-                placeholder="Enter your full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="border-navy-200 focus:border-gold-500 focus:ring-gold-500/20"
-              />
-            </div>
+      <div className="space-y-1.5">
+        <Label
+          htmlFor="contact-phone"
+          className="text-navy-700 font-semibold text-sm"
+        >
+          Phone Number
+        </Label>
+        <Input
+          id="contact-phone"
+          data-ocid="contact.phone.input"
+          type="tel"
+          placeholder="+91 XXXXX XXXXX"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          required
+          className="border-navy-200 focus:border-gold-500 focus:ring-gold-500/20"
+        />
+      </div>
 
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="contact-phone"
-                className="text-navy-700 font-semibold text-sm"
-              >
-                Phone Number
-              </Label>
-              <Input
-                id="contact-phone"
-                data-ocid="contact.phone.input"
-                type="tel"
-                placeholder="+91 XXXXX XXXXX"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-                className="border-navy-200 focus:border-gold-500 focus:ring-gold-500/20"
-              />
-            </div>
+      <div className="space-y-1.5">
+        <Label
+          htmlFor="contact-message"
+          className="text-navy-700 font-semibold text-sm"
+        >
+          Message
+        </Label>
+        <Textarea
+          id="contact-message"
+          data-ocid="contact.message.textarea"
+          placeholder="Tell us about your enquiry..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          required
+          rows={4}
+          className="border-navy-200 focus:border-gold-500 focus:ring-gold-500/20 resize-none"
+        />
+      </div>
 
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="contact-message"
-                className="text-navy-700 font-semibold text-sm"
-              >
-                Message
-              </Label>
-              <Textarea
-                id="contact-message"
-                data-ocid="contact.message.textarea"
-                placeholder="Tell us about your enquiry..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                required
-                rows={4}
-                className="border-navy-200 focus:border-gold-500 focus:ring-gold-500/20 resize-none"
-              />
-            </div>
+      <Button
+        type="submit"
+        data-ocid="contact.submit_button"
+        className="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-2.5 text-base shadow-md transition-all duration-200"
+      >
+        <MessageCircle className="w-4 h-4 mr-2" />
+        Send Message
+      </Button>
 
-            <Button
-              type="submit"
-              data-ocid="contact.submit_button"
-              className="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-2.5 text-base shadow-md transition-all duration-200"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Send Message
-            </Button>
-          </form>
-
-          <AnimatePresence>
-            {submitted && (
-              <motion.div
-                data-ocid="contact.success_state"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.3 }}
-                className="mt-4 flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-green-700 text-sm font-medium"
-              >
-                <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                Message sent! We will contact you soon.
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </CardContent>
-      </Card>
-    </motion.div>
+      <AnimatePresence>
+        {submitted && (
+          <motion.div
+            data-ocid="contact.success_state"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-green-700 text-sm font-medium"
+          >
+            <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+            Message sent! We will contact you soon.
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </form>
   );
 }
+
+type GalleryPhoto = {
+  src: string;
+  alt: string;
+  orientation: "landscape" | "portrait";
+};
+
+const galleryPhotos: GalleryPhoto[] = [
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.13-PM-1--1.jpeg",
+    alt: "Staff Photo",
+    orientation: "landscape",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.09-PM-4.jpeg",
+    alt: "Fancy Dress Girls",
+    orientation: "portrait",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.12-PM-2--2.jpeg",
+    alt: "Flag Ceremony",
+    orientation: "landscape",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.11-PM-1--5.jpeg",
+    alt: "Dinosaur Trip",
+    orientation: "portrait",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.12-PM-1--3.jpeg",
+    alt: "Flag Ceremony 2",
+    orientation: "landscape",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.10-PM-7.jpeg",
+    alt: "Kids on Stage",
+    orientation: "landscape",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.12-PM-6.jpeg",
+    alt: "Museum Cave Visit",
+    orientation: "landscape",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.08-PM-1--10.jpeg",
+    alt: "Yellow Kids Basant",
+    orientation: "portrait",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.08-PM-8.jpeg",
+    alt: "Janmashtami Celebration",
+    orientation: "landscape",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.10-PM-2--11.jpeg",
+    alt: "Green Day Children",
+    orientation: "portrait",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.13-PM-9.jpeg",
+    alt: "Red Day Celebration",
+    orientation: "landscape",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.11-PM-12.jpeg",
+    alt: "Manners & Welcome Signs Kids",
+    orientation: "portrait",
+  },
+  {
+    src: "/assets/uploads/WhatsApp-Image-2026-03-12-at-6.53.10-PM-1--13.jpeg",
+    alt: "Pink Dress Kids",
+    orientation: "portrait",
+  },
+];
 
 function SchoolWebsite() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [lightboxPhoto, setLightboxPhoto] = useState<GalleryPhoto | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -175,7 +231,6 @@ function SchoolWebsite() {
     { label: "About", href: "#about", ocid: "nav.about.link" },
     { label: "Academics", href: "#academics", ocid: "nav.academics.link" },
     { label: "Gallery", href: "#gallery", ocid: "nav.gallery.link" },
-    { label: "Admissions", href: "#admissions", ocid: "nav.admissions.link" },
     { label: "Contact", href: "#contact", ocid: "nav.contact.link" },
   ];
 
@@ -191,6 +246,52 @@ function SchoolWebsite() {
 
   return (
     <div className="min-h-screen bg-background font-body">
+      {/* CONTACT MODAL */}
+      <Dialog open={contactModalOpen} onOpenChange={setContactModalOpen}>
+        <DialogContent data-ocid="contact.dialog" className="max-w-md w-full">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
+                <MessageCircle className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <DialogTitle className="font-display text-xl font-bold text-navy-800">
+                  Send Us a Message
+                </DialogTitle>
+                <p className="text-sm text-muted-foreground">
+                  We'll reply on WhatsApp
+                </p>
+              </div>
+            </div>
+          </DialogHeader>
+          <ContactForm onSuccess={() => setContactModalOpen(false)} />
+        </DialogContent>
+      </Dialog>
+
+      {/* LIGHTBOX */}
+      <Dialog
+        open={!!lightboxPhoto}
+        onOpenChange={(open) => !open && setLightboxPhoto(null)}
+      >
+        <DialogContent
+          data-ocid="gallery.dialog"
+          className="max-w-4xl w-full p-2 bg-navy-950 border-navy-800"
+        >
+          <DialogHeader className="sr-only">
+            <DialogTitle>{lightboxPhoto?.alt ?? "Photo"}</DialogTitle>
+          </DialogHeader>
+          {lightboxPhoto && (
+            <div className="relative">
+              <img
+                src={lightboxPhoto.src}
+                alt={lightboxPhoto.alt}
+                className="w-full max-h-[80vh] object-contain rounded-lg"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* NAVBAR */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -229,11 +330,13 @@ function SchoolWebsite() {
               </li>
             ))}
             <li className="ml-3">
-              <a href="#admissions">
-                <Button className="bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold text-sm px-5">
-                  Apply Now
-                </Button>
-              </a>
+              <Button
+                data-ocid="nav.apply.button"
+                onClick={() => setContactModalOpen(true)}
+                className="bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold text-sm px-5"
+              >
+                Apply Now
+              </Button>
             </li>
           </ul>
 
@@ -275,6 +378,18 @@ function SchoolWebsite() {
                     </a>
                   </li>
                 ))}
+                <li className="pt-2">
+                  <Button
+                    data-ocid="nav.apply.mobile.button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setContactModalOpen(true);
+                    }}
+                    className="w-full bg-gold-500 hover:bg-gold-400 text-navy-900 font-semibold text-sm"
+                  >
+                    Apply Now
+                  </Button>
+                </li>
               </ul>
             </motion.div>
           )}
@@ -335,16 +450,15 @@ function SchoolWebsite() {
               variants={fadeUp}
               className="flex flex-wrap gap-4 justify-center"
             >
-              <a href="#admissions">
-                <Button
-                  data-ocid="hero.admission.primary_button"
-                  size="lg"
-                  className="bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold px-8 py-3 text-base shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  Apply for Admission
-                  <ChevronRight className="w-5 h-5 ml-1" />
-                </Button>
-              </a>
+              <Button
+                data-ocid="hero.admission.primary_button"
+                size="lg"
+                onClick={() => setContactModalOpen(true)}
+                className="bg-gold-500 hover:bg-gold-400 text-navy-900 font-bold px-8 py-3 text-base shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Apply for Admission
+                <ChevronRight className="w-5 h-5 ml-1" />
+              </Button>
               <a href="#about">
                 <Button
                   data-ocid="hero.learn_more.secondary_button"
@@ -409,36 +523,46 @@ function SchoolWebsite() {
               >
                 Our Gallery
               </motion.h2>
-              <motion.p
-                variants={fadeUp}
-                className="mt-4 text-muted-foreground text-base max-w-xl mx-auto"
-              >
-                Photos of our students, events, and school activities will be
-                shared here soon. Stay tuned!
-              </motion.p>
             </motion.div>
 
+            {/* Masonry grid */}
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-80px" }}
               variants={stagger}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="columns-1 sm:columns-2 lg:columns-3 gap-6"
+              style={{ columnGap: "1.5rem" }}
             >
-              {[1, 2, 3, 4, 5, 6].map((i) => (
+              {galleryPhotos.map((photo, i) => (
                 <motion.div
-                  key={i}
+                  key={photo.src}
                   variants={fadeUp}
-                  data-ocid={`gallery.item.${i}`}
+                  data-ocid={`gallery.item.${i + 1}`}
+                  className="break-inside-avoid mb-6"
                 >
-                  <div className="aspect-[4/3] bg-white border-2 border-dashed border-navy-200 rounded-2xl flex flex-col items-center justify-center gap-3 hover:border-gold-400 hover:bg-gold-50/30 transition-all duration-300 group">
-                    <div className="w-14 h-14 rounded-full bg-navy-100 group-hover:bg-gold-100 flex items-center justify-center transition-colors duration-300">
-                      <Camera className="w-7 h-7 text-navy-400 group-hover:text-gold-600 transition-colors duration-300" />
+                  <button
+                    type="button"
+                    onClick={() => setLightboxPhoto(photo)}
+                    className="group relative w-full block overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 cursor-zoom-in"
+                    aria-label={`View ${photo.alt}`}
+                  >
+                    <img
+                      src={photo.src}
+                      alt={photo.alt}
+                      className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      style={{
+                        aspectRatio:
+                          photo.orientation === "landscape" ? "4/3" : "3/4",
+                      }}
+                    />
+                    {/* Hover overlay — zoom icon only, no caption */}
+                    <div className="absolute inset-0 bg-navy-900/0 group-hover:bg-navy-900/30 transition-all duration-300 rounded-2xl flex items-center justify-center">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg">
+                        <ZoomIn className="w-5 h-5 text-navy-800" />
+                      </div>
                     </div>
-                    <p className="text-navy-400 group-hover:text-navy-600 text-sm font-medium transition-colors duration-300">
-                      Photo coming soon
-                    </p>
-                  </div>
+                  </button>
                 </motion.div>
               ))}
             </motion.div>
@@ -719,112 +843,6 @@ function SchoolWebsite() {
           </div>
         </section>
 
-        {/* ADMISSIONS */}
-        <section
-          id="admissions"
-          className="py-24 bg-gradient-to-br from-navy-50 to-navy-100"
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              variants={stagger}
-              className="text-center mb-6"
-            >
-              <motion.p
-                variants={fadeUp}
-                className="text-gold-600 font-semibold text-sm tracking-widest uppercase mb-2"
-              >
-                Join Our School
-              </motion.p>
-              <motion.h2
-                variants={fadeUp}
-                className="font-display text-4xl sm:text-5xl font-bold text-navy-800 mb-4"
-              >
-                Admissions
-              </motion.h2>
-              <motion.div variants={fadeUp}>
-                <span className="inline-block bg-gold-500 text-navy-900 font-bold text-sm px-6 py-2 rounded-full shadow-md">
-                  🎓 Admissions Open for 2026–27
-                </span>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              variants={stagger}
-              className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
-            >
-              {[
-                {
-                  step: "01",
-                  title: "Fill Application Form",
-                  desc: "Complete the admission form online or visit our office in Malviya Nagar.",
-                },
-                {
-                  step: "02",
-                  title: "Document Verification",
-                  desc: "Submit required documents: birth certificate, previous marksheets, transfer certificate.",
-                },
-                {
-                  step: "03",
-                  title: "Student Interaction",
-                  desc: "A friendly interaction session with our academic team to understand the student's needs.",
-                },
-                {
-                  step: "04",
-                  title: "Admission Confirmed",
-                  desc: "Receive your admission letter and welcome pack. You're now part of the Sanskar family!",
-                },
-              ].map((step, i) => (
-                <motion.div
-                  key={step.step}
-                  variants={fadeUp}
-                  className="relative"
-                >
-                  {i < 3 && (
-                    <div className="hidden lg:block absolute top-8 left-[calc(100%_-_12px)] w-6 h-0.5 bg-gold-400 z-10" />
-                  )}
-                  <Card className="h-full border-0 shadow-card">
-                    <CardContent className="p-7">
-                      <div className="font-display text-5xl font-black text-gold-400/30 leading-none mb-4">
-                        {step.step}
-                      </div>
-                      <h3 className="font-display text-lg font-bold text-navy-800 mb-3">
-                        {step.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed">
-                        {step.desc}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-center mt-12"
-            >
-              <a href="#contact">
-                <Button
-                  size="lg"
-                  className="bg-navy-700 hover:bg-navy-600 text-white font-semibold px-10 py-3 text-base shadow-lg"
-                >
-                  Contact Us for Admission
-                  <ChevronRight className="w-5 h-5 ml-2" />
-                </Button>
-              </a>
-            </motion.div>
-          </div>
-        </section>
-
         {/* CONTACT */}
         <section id="contact" className="py-24 bg-white">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -863,11 +881,15 @@ function SchoolWebsite() {
                     label: "Address",
                     value:
                       "40-Rajmarg, Chhatrasal Nagar, Malviya Nagar, Jaipur",
+                    href: "https://maps.google.com/?q=40-Rajmarg,Chhatrasal+Nagar,Malviya+Nagar,Jaipur",
+                    ocid: "contact.address.link",
                   },
                   {
                     icon: Phone,
                     label: "Phone",
                     value: "+91 8104640177",
+                    href: "tel:+918104640177",
+                    ocid: "contact.phone.link",
                   },
                 ].map((info) => (
                   <motion.div
@@ -882,9 +904,19 @@ function SchoolWebsite() {
                       <div className="text-xs font-semibold text-gold-600 uppercase tracking-wider mb-1">
                         {info.label}
                       </div>
-                      <div className="text-navy-800 font-medium text-lg">
+                      <a
+                        href={info.href}
+                        target={info.label === "Address" ? "_blank" : undefined}
+                        rel={
+                          info.label === "Address"
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
+                        data-ocid={info.ocid}
+                        className="text-navy-800 font-medium text-lg hover:text-gold-600 hover:underline transition-colors cursor-pointer"
+                      >
                         {info.value}
-                      </div>
+                      </a>
                     </div>
                   </motion.div>
                 ))}
@@ -917,8 +949,34 @@ function SchoolWebsite() {
                 </div>
               </motion.div>
 
-              {/* WhatsApp Contact Form */}
-              <ContactForm />
+              {/* Embedded Contact Form */}
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="mt-8 w-full"
+              >
+                <Card className="border-0 shadow-card overflow-hidden">
+                  <div className="h-2 bg-gradient-to-r from-gold-500 to-gold-400" />
+                  <CardContent className="p-7">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
+                        <MessageCircle className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-display text-xl font-bold text-navy-800">
+                          Send Us a Message
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          We'll reply on WhatsApp
+                        </p>
+                      </div>
+                    </div>
+                    <ContactForm />
+                  </CardContent>
+                </Card>
+              </motion.div>
             </motion.div>
           </div>
         </section>
@@ -980,13 +1038,25 @@ function SchoolWebsite() {
               <ul className="space-y-3 text-navy-300 text-sm">
                 <li className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 text-gold-500 flex-shrink-0 mt-0.5" />
-                  <span>
+                  <a
+                    href="https://maps.google.com/?q=40-Rajmarg,Chhatrasal+Nagar,Malviya+Nagar,Jaipur"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-ocid="footer.address.link"
+                    className="hover:text-gold-400 hover:underline transition-colors"
+                  >
                     40-Rajmarg, Chhatrasal Nagar, Malviya Nagar, Jaipur
-                  </span>
+                  </a>
                 </li>
                 <li className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-gold-500 flex-shrink-0" />
-                  <span>+91 8104640177</span>
+                  <a
+                    href="tel:+918104640177"
+                    data-ocid="footer.phone.link"
+                    className="hover:text-gold-400 hover:underline transition-colors"
+                  >
+                    +91 8104640177
+                  </a>
                 </li>
               </ul>
             </div>
